@@ -11,8 +11,6 @@ import { QueryComponent } from './components/query/query.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PetitionComponent } from './components/petition/petition.component';
 import { GrievanceComponent } from './components/grievance/grievance.component';
-import { ModalRequestComponent } from './components/modal-request/modal-request.component';
-import { RequestListComponent } from './components/request-list/request-list.component';
 
 @NgModule({
   declarations: [
@@ -21,9 +19,7 @@ import { RequestListComponent } from './components/request-list/request-list.com
     RequestComponent,
     QueryComponent,
     PetitionComponent,
-    GrievanceComponent,
-    ModalRequestComponent,
-    RequestListComponent
+    GrievanceComponent
   ],
   imports: [
     BrowserModule,

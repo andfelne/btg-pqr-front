@@ -4,11 +4,8 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-grievance',
   templateUrl: './grievance.component.html'
 })
-export class GrievanceComponent implements OnInit {
+export class GrievanceComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

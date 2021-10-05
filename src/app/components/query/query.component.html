@@ -1,6 +1,6 @@
 <h4>Consultar PQR</h4>
 <hr>
-<form [formGroup]="queryPQRForm" (ngSubmit)="queryPQR()">
+<form [formGroup]="filtersForm" (ngSubmit)="queryPQR()">
 
   <div class="form-group row">
     <label class="col-4 col-form-label">Tipo de solicitud</label>
@@ -51,16 +51,6 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-4 col-form-label">Contiene el texto: </label>
-    <div class="col-8">
-      <input class="form-control"
-             type="text"
-             formControlName="contains">
-    </div>
-  </div>
-
-
-  <div class="form-group row">
     <label class="col-2 col-form-label">&nbsp;</label>
     <div class="input-group col-md-8">
       <button type="submit" class="btn btn-outline-primary">
@@ -71,9 +61,119 @@
 
 </form>
 
+<!-- Results list -->
+<div *ngIf="requests && requests.length > 0">
+  <br>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Fecha de Solicitud</th>
+      <th>Código Unico</th>
+      <th>Descripción de Solicitud</th>
+      <th>Respuesta Administrativa</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let request of requests">
+      <td>{{request.filingDate | date: 'short'}}</td>
+      <td>{{request.sequence}}</td>
+      <td>{{request.description}}</td>
+      <td>
+        {{request.response ? request.response : 'Sin respuesta aún.'}}
+        <button *ngIf="showClaimOption(request);" type="button" class="btn btn-link btn-sm" data-toggle="modal"
+                data-target="#myModalClaim" (click)="showModalForClaim(request)">Reclama Aquí
+        </button>
+        <button *ngIf="request.haveClaim || request.requestType === 'R'" type="button" class="btn btn-link btn-sm"
+                data-toggle="modal" data-target="#myModal" (click)="showModalForClaim(request)">Ver detalle completo
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <br>
+</div>
 
-<app-request-list [requests]="requests" (requestSelected)="getRequestSelected($event);" ></app-request-list>
+<div *ngIf="submmited && (!requests || requests.length == 0)">
+  <span>No se encontraron solucitudes para mostrar...</span>
+</div>
 
-<ng-container *ngIf="requestSelected">
-  <app-modal-request [requestSelected]="requestSelected"></app-modal-request>
-</ng-container>
+<!-- The Modal request detail -->
+<div class="modal fade" id="myModal" #content>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 *ngIf="requestSelected?.requestParent?.requestType == 'P'">Detalle Petición</h4>
+        <h4 *ngIf="requestSelected?.requestParent?.requestType == 'Q'">Detalle Queja</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <hr>
+
+      <div class="modal-body">
+        <div class="form-group row">
+          <label class="col-3 col-form-label">Descripcion</label>
+          <div class="col-8">
+      <textarea class="form-control"
+                type="text"
+                [ngModel]="requestSelected?.requestParent?.description" disabled></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-3 col-form-label">Fecha radicación</label>
+          <div class="col-8">
+            <input class="form-control"
+                   type="text"
+                   [ngModel]="requestSelected?.requestParent?.filingDate | date: 'short'" disabled>
+          </div>
+        </div>
+        <div class="form-group row" *ngIf="requestSelected?.requestParent?.response">
+          <label class="col-3 col-form-label">Respuesta Administrativa</label>
+          <div class="col-8">
+      <textarea class="form-control"
+                type="text"
+                [ngModel]="requestSelected?.requestParent?.response" disabled></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-3 col-form-label">Reclamo</label>
+          <div class="col-8">
+      <textarea class="form-control"
+                type="text"
+                [ngModel]="requestSelected?.description" disabled></textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-3 col-form-label">Fecha radicación</label>
+          <div class="col-8">
+            <input class="form-control"
+                   type="text"
+                   [ngModel]="requestSelected?.filingDate | date: 'short'" disabled>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- The Modal claim -->
+<div class="modal fade" id="myModalClaim">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4>Reclamo!</h4>
+        <button type="button" class="close" data-dismiss="modal" #closebuttonform>&times;</button>
+      </div>
+      <hr>
+
+      <div class="modal-body">
+        <app-request *ngIf="requestSelected" requestType="R" [requestParent]="requestSelected"
+                     (requestSaved)="getRequestSaved($event);"></app-request>
+      </div>
+
+    </div>
+  </div>
+</div>

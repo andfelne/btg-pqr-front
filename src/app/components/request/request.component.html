@@ -1,81 +1,33 @@
-<ng-container *ngIf="!claim">
-  <form [formGroup]="requestForm" (ngSubmit)="saveGrievance()">
+<form [formGroup]="requestForm" (ngSubmit)="saveGrievance()">
 
-    <div class="form-group row" [ngClass]="{ 'has-danger': submitted && !requestForm.controls['description'].valid }">
-      <label class="col-2 col-form-label">Ingrese su solicitud</label>
-      <div class="col-8">
+  <div class="form-group row" [ngClass]="{ 'has-danger': submitted && !requestForm.controls['description'].valid }">
+    <label class="col-2 col-form-label">Ingrese su solicitud</label>
+    <div class="col-8">
       <textarea class="form-control"
                 type="text"
                 formControlName="description"></textarea>
 
-        <div *ngIf="submitted && requestForm.controls['description'].errors?.required"
-             class="form-control-feedback">
-          Debe escribir su solicitud.
-        </div>
+      <div *ngIf="submitted && requestForm.controls['description'].errors?.required"
+           class="form-control-feedback">
+        Debe escribir su solicitud.
       </div>
     </div>
+  </div>
 
-    <div class="form-group row">
-      <label class="col-2 col-form-label">&nbsp;</label>
-      <div class="input-group col-md-8">
-        <button type="submit" class="btn btn-outline-primary">
-          Guardar
-        </button>
-      </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">&nbsp;</label>
+    <div class="input-group col-md-8">
+      <button type="submit" class="btn btn-outline-primary">
+        Guardar
+      </button>
     </div>
+  </div>
 
-    <div *ngIf="saveSuccessful != undefined && !saveSuccessful" class="alert alert-danger" role="alert">
-      ¡La solicitud no se ha podido radicar, por favor intentelo màs tarde!
-    </div>
-    <div *ngIf="saveSuccessful" class="alert alert-success" role="alert">
-      ¡Su solicitud se ha radicado correctamente con el número {{uniqueCode}}!
-    </div>
+  <div *ngIf="saveSuccessful != undefined && !saveSuccessful" class="alert alert-danger" role="alert">
+    ¡La solicitud no se ha podido radicar, por favor intentelo màs tarde!
+  </div>
+  <div *ngIf="saveSuccessful" class="alert alert-success" role="alert">
+    ¡Su solicitud se ha radicado correctamente con el número {{uniqueCode}}!
+  </div>
 
-  </form>
-</ng-container>
-
-<ng-container *ngIf="claim != undefined && claim != null">
-  <h4 *ngIf="claim?.requestParent?.requestType == 'P'">Detalle Petición</h4>
-  <h4 *ngIf="claim?.requestParent?.requestType == 'Q'">Detalle Queja</h4>
-  <hr>
-  <div class="form-group row">
-    <label class="col-2 col-form-label">Descripcion</label>
-    <div class="col-8">
-      <textarea class="form-control"
-                type="text"
-                [ngModel]="claim.requestParent?.description" disabled></textarea>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha radicación</label>
-    <div class="col-8">
-      <input class="form-control"
-             type="text"
-             [ngModel]="claim.requestParent?.filingDate | date: 'short'" disabled>
-    </div>
-  </div>
-  <div class="form-group row" *ngIf="claim.requestParent?.response">
-    <label class="col-2 col-form-label">Respuesta Administrativa</label>
-    <div class="col-8">
-      <textarea class="form-control"
-                type="text"
-                [ngModel]="claim.requestParent?.response" disabled></textarea>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label class="col-2 col-form-label">Reclamo</label>
-    <div class="col-8">
-      <textarea class="form-control"
-                type="text"
-                [ngModel]="claim.description" disabled></textarea>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha radicación</label>
-    <div class="col-8">
-      <input class="form-control"
-             type="text"
-             [ngModel]="claim.filingDate | date: 'short'" disabled>
-    </div>
-  </div>
-</ng-container>
+</form>

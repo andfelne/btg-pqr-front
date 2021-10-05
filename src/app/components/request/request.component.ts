@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RequestService} from "../../services/request.service";
 import {Request} from "../../models/request";
@@ -7,36 +7,22 @@ import {Request} from "../../models/request";
   selector: 'app-request',
   templateUrl: './request.component.html'
 })
-export class RequestComponent implements OnInit {
+export class RequestComponent {
 
   @Input() requestType: string | null = null;
   @Input() requestParent: Request | null = null;
+  @Output() requestSaved = new EventEmitter<Request>();
+
+  submitted: boolean = false;
+  uniqueCode?: number;
+  saveSuccessful: any;
 
   requestForm: FormGroup;
-  submitted: boolean = false;
-  saveSuccessful: any;
-  uniqueCode?: number;
-  claim?: Request;
 
   constructor(private _service: RequestService) {
     this.requestForm = new FormGroup({
       description: new FormControl('', Validators.required),
     });
-  }
-
-  ngOnInit(): void {
-    this.getClaimAndLoad();
-  }
-
-  async getClaimAndLoad(): Promise<void> {
-    if (this.requestParent?.haveClaim) {
-      this.claim = await this._service.findClimByRequestId(this.requestParent?.id)
-    } else if (this.requestParent?.requestParent) {
-      this.claim = this.requestParent;
-    }
-    if (this.claim) {
-      this.requestForm.reset(this.claim);
-    }
   }
 
   saveGrievance() {
@@ -51,7 +37,8 @@ export class RequestComponent implements OnInit {
           const requestResult = response as Request;
           this.saveSuccessful = true;
           this.uniqueCode = requestResult.sequence;
-          this.reset();
+          this.resetForm();
+          this.requestSaved.emit(requestResult);
         },
         error => {
           this.saveSuccessful = false;
@@ -60,7 +47,7 @@ export class RequestComponent implements OnInit {
     }
   }
 
-  reset(): void {
+  resetForm(): void {
     if (this.requestType != null) {
       this.requestForm.reset(new Request(this.requestType));
     }
